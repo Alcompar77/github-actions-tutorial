@@ -6,12 +6,12 @@ on:
   push:
     branches:
       - master
-      - feature
+      - awesom-feature
 
   pull_request:
     branches:
       - master
-      - feature
+      - awesom-feature
 
 jobs:
   run-tests:
