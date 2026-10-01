@@ -1,16 +1,16 @@
 name: main-worklfow
-
-env:
-  IMAGE_REPOSITORY: Alcompar77/foobar
-
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
+      - awesome-feature
   pull_request:
     branches:
       - master
-
+      - awesome-feature
+env:
+  IMAGE_REPOSITORY: ghcr.io/paez1999/foobar
 jobs:
   # Run all unit tests.
   run-tests:
@@ -19,15 +19,13 @@ jobs:
       # Check out the pull request's source code.
       - name: Check out source code
         uses: actions/checkout@v3
-
       # Install Go.
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: "^1.14" # The Go version to download and use.
+          go-version: "^1.14"
       - name: Print Go version
         run: go version
-
       # Run unit tests.
       - name: Run unit tests
         run: go test -v ./...
@@ -35,17 +33,29 @@ jobs:
   # Build and release.
   build-and-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-      # Check out source code.
       - name: Check out source code
         uses: actions/checkout@v3
-
-      # Build and push container image.
       - name: Build and push container image
         uses: docker/build-push-action@v1
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ env.IMAGE_REPOSITORY }}
           tag_with_ref: true
-          tag_with_sha: true # sha-${GITHUB_SHA::7}
+          tag_with_sha: true
+
+  # Deploy to Kubernetes.
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs:
+      - run-tests
+      - build-and-release
+    steps:
+      - name: Deploy to staging
+        run: echo "Deploying app to staging environment"
