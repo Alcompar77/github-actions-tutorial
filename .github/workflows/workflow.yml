@@ -10,7 +10,7 @@ on:
       - master
       - awesome-feature
 env:
-  IMAGE_REPOSITORY: ghcr.io/paez1999/foobar
+  IMAGE_REPOSITORY: ghcr.io/Alcompar77/foobar
 jobs:
   # Run all unit tests.
   run-tests:
@@ -48,14 +48,4 @@ jobs:
           repository: ${{ env.IMAGE_REPOSITORY }}
           tag_with_ref: true
           tag_with_sha: true
-
-  # Deploy to Kubernetes.
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    needs:
-      - run-tests
-      - build-and-release
-    steps:
-      - name: Deploy to staging
-        run: echo "Deploying app to staging environment"
+          
