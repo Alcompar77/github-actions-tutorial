@@ -10,7 +10,7 @@ on:
       - master
       - awesome-feature
 env:
-  IMAGE_REPOSITORY: ghcr.io/Alcompar77/foobar
+  IMAGE_REPOSITORY: Alcompar77/foobar
 jobs:
   # Run all unit tests.
   run-tests:
@@ -48,4 +48,4 @@ jobs:
           repository: ${{ env.IMAGE_REPOSITORY }}
           tag_with_ref: true
           tag_with_sha: true
-          
+
